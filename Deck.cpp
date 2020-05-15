@@ -22,7 +22,7 @@ void Deck::initializeDeck() {
     for (int i = 0; i < 4; i++) {
         // Creating both wildcard +4 and wildcard
         cards.push_back("+4W");
-        cards.push_back("W");
+        cards.push_back("WW");
 
         // Creating the 4 different color suits
         cards.push_back("0" + suits[i]);
@@ -50,9 +50,7 @@ void Deck::shuffleDeck() {
     shuffle(begin(cards), end(cards), default_random_engine(seed));
 }
 
+// "Num" amount of cards are deleted from end of the vector
 void Deck::subtractCards(unsigned short num) {
-    auto firstIter = getCards().end() - num;
-    auto lastIter = getCards().end();
-    getCards().erase(firstIter, lastIter);
     numOfCards -= num;
 }

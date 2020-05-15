@@ -5,6 +5,7 @@
 #pragma once
 
 #include <vector>
+#include <map>
 #include <string>
 #include "Deck.h"
 
@@ -26,6 +27,8 @@ public:
     vector<string> getHand();
 
     // Setter(s)
-    void pickUpCards(unsigned short num, Deck& deck);
+    bool pickUpCards(unsigned short num, Deck& deck);
+    vector<string>::iterator cardMatch(string& playerCard, map<string, char> playerCardInfo, string& pileCard, map<string, char> pileCardInfo);
+    void placeDownCards(vector<string>::iterator index);
 };
 
