@@ -6,7 +6,9 @@
 
 #include <vector>
 #include <map>
+#include <iostream>
 #include <string>
+#include "DiscardPile.h"
 #include "Deck.h"
 
 using namespace std;
@@ -15,7 +17,7 @@ class Player {
 private:
     string name;
     unsigned short numOfCards;
-    vector<string> hand;
+    vector<Card*> hand;
 
 public:
     // Constructor(s)
@@ -24,11 +26,11 @@ public:
     // Getter(s)
     string getName();
     unsigned short getNumOfCards();
-    vector<string> getHand();
+    vector<Card*> getHand();
 
     // Setter(s)
-    bool pickUpCards(unsigned short num, Deck& deck);
-    vector<string>::iterator cardMatch(string& playerCard, map<string, char> playerCardInfo, string& pileCard, map<string, char> pileCardInfo);
-    void placeDownCards(vector<string>::iterator index);
+    void pickUpCards(unsigned short num);
+    vector<Card*>::iterator cardMatch(Card* playerCard);
+    void discardCards(vector<Card*>::iterator index);
 };
 

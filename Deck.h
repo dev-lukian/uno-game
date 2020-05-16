@@ -6,26 +6,24 @@
 
 #include <vector>
 #include <string>
+#include "Card.h"
 
 using namespace std;
 
 class Deck {
 private:
-    unsigned int numOfCards;
-    vector<string> cards;
-    const vector<string> suits {"R", "G", "Y", "B"};
+    static unsigned int numOfCards;
+    static vector<Card*> cards;
 
 public:
-    // Constructor(s)
-    Deck();
-
     // Getter(s)
-    unsigned int getNumOfCards();
-    vector<string> getCards();
+    static unsigned int getNumOfCards();
+    static vector<Card*> getCards();
+    static Card* getTopCard();
 
     // Setter(s)
-    void initializeDeck();
-    void shuffleDeck();
-    void subtractCards(unsigned short num);
+    static void initializeDeck();
+    static void shuffleDeck();
+    static void subtract(unsigned short num);
 };
 

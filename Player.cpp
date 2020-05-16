@@ -17,35 +17,23 @@ unsigned short Player::getNumOfCards() {
     return numOfCards;
 }
 
-vector<string> Player::getHand() {
+vector<Card*> Player::getHand() {
     return hand;
 }
 
 // Picks up "num" amount of cards from the deck
-bool Player::pickUpCards(unsigned short num, Deck& deck) {
-    short topCardIndex = deck.getNumOfCards() - 1;
-
-    if (topCardIndex < 0) {
-        return false;
-    }
-
+void Player::pickUpCards(unsigned short num) {
     for (int i = 0; i < num; i++) {
-        hand.push_back(deck.getCards()[deck.getNumOfCards() - 1 - i]);
+        hand.push_back(Deck::getTopCard());
         numOfCards++;
+        Deck::subtract(1);
     }
-
-    deck.subtractCards(num);
-    return true;
 }
 
-vector<string>::iterator Player::cardMatch(string& playerCard, map<string, char> playerCardInfo, string& pileCard, map<string, char> pileCardInfo) {
-    if (playerCard.empty()) {
-        throw "You do not have such a card in your hand! Try again.";
-    }
-
+vector<Card*>::iterator Player::cardMatch(Card* playerCard) {
     for (auto iter = hand.begin(); iter != hand.end(); iter++) {
-        if (playerCard == *iter) {
-            if (playerCardInfo["Wildcard"] == 'Y' || playerCardInfo["Color"] == pileCardInfo["Color"] || playerCardInfo["Digit"] == pileCardInfo["Digit"]) {
+        if (playerCard->getDisplayValue() == (*iter)->getDisplayValue()) {
+            if (playerCard->getWildCard() || playerCard->getColor() == DiscardPile::getCurrentColor() || playerCard->getDigit() == DiscardPile::getCurrentDigit()) {
                 return iter;
             }
             else {
@@ -57,7 +45,7 @@ vector<string>::iterator Player::cardMatch(string& playerCard, map<string, char>
     throw "You do not have such a card in your hand! Try again.";
 }
 
-void Player::placeDownCards(vector<string>::iterator index) {
+void Player::discardCards(vector<Card*>::iterator index) {
     hand.erase(index);
     numOfCards--;
 }
