@@ -53,8 +53,19 @@ int main() {
 
 
     cout << "UNO Game" << endl;
-    cout << "Number of players (2-10): ";
-    cin >> numOfPlayers;
+    while (true) {
+        try {
+            cout << "Number of players (2-10): ";
+            cin >> numOfPlayers;
+            if (numOfPlayers < 2 || numOfPlayers > 10) {
+                throw "Only 2-10 players can play UNO. Please type in a valid number.";
+            }
+            break;
+        }
+        catch (const char* error) {
+            cout << error << endl;
+        }
+    }
     cout << endl;
 
     // Prompt asking for each player's name
@@ -69,12 +80,16 @@ int main() {
         players[i - 1].pickUpCards(7);
     }
 
-
     bool winningCondition = false;
     // Game starts with Player #1 going first
     unsigned short turn = 0;
     // Game starts with turns going forward, switches if "Reverse" card is played
     bool reverse = false;
+    // If first card placed in discard pile is +4W, deck must be reshuffled
+    if (Deck::getTopCard()->getWildCard() && Deck::getTopCard()->getDraw() != 'N') {
+        cout << "First card draw is a +4 wildcard. Deck is reshuffled." << endl;
+        Deck::shuffleDeck();
+    }
     // Card from deck is placed in discard pile to start the game
     DiscardPile::addCard(Deck::getTopCard());
     Deck::subtract(1);
@@ -100,10 +115,22 @@ int main() {
         displayDiscardPile();
         cout << "\n-------------------------------------------------------" << endl;
         displayPlayerHand(players[turn]);
-        cout << "\n\nWhat do you want to do?" << endl;
-        cout << "1. Discard a card" << endl;
-        cout << "2. Pick up a card" << endl;
-        cin >> playerOption;
+
+        while (true) {
+            try {
+                cout << "\nWhat do you want to do?" << endl;
+                cout << "1. Discard a card" << endl;
+                cout << "2. Pick up a card" << endl;
+                cin >> playerOption;
+                if (playerOption != 1 && playerOption != 2) {
+                    throw "Invalid menu option. Please try again.";
+                }
+                break;
+            }
+            catch (const char* error) {
+                cout << error << endl;
+            }
+        }
         if (playerOption == 1) {
             Card* discardedCard = discardOption(players[turn], discard, playerOption, winningCondition);
             if (discardedCard != nullptr) {
@@ -160,6 +187,7 @@ void displayPlayerHand(Player& currentPlayer) {
     for (int i = 0; i < currentPlayer.getHand().size(); i++) {
         cout << currentPlayer.getHand()[i]->getDisplayValue() << " ";
     }
+    cout << endl;
 }
 
 void actionCheck(Card* card, unsigned short& turn, vector<Player>& players, unsigned short& numOfPlayers, bool& reverse, bool firstCard) {
