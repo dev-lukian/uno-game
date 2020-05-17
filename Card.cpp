@@ -23,9 +23,9 @@ Card::Card(string displayValue) {
     if (displayValue[displayValue.length()-1] == 'W') {
         wildcard = true;
         color = 'N';
+        digit = 'N';
         if (displayValue.length() == 1) {
             plus = 'N';
-            digit = 'N';
         }
     }
     else {
