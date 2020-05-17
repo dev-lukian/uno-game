@@ -7,6 +7,7 @@
 Player::Player(string& name) {
     this->name = name;
     numOfCards = 0;
+    winner = false;
 }
 
 string Player::getName() {
@@ -19,6 +20,10 @@ unsigned short Player::getNumOfCards() {
 
 vector<Card*> Player::getHand() {
     return hand;
+}
+
+bool Player::getWinner() {
+    return winner;
 }
 
 // Picks up "num" amount of cards from the deck
@@ -48,4 +53,8 @@ vector<Card*>::iterator Player::cardMatch(Card* playerCard) {
 void Player::discardCards(vector<Card*>::iterator index) {
     hand.erase(index);
     numOfCards--;
+}
+
+void Player::setWinner() {
+    winner = true;
 }

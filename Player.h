@@ -18,6 +18,7 @@ private:
     string name;
     unsigned short numOfCards;
     vector<Card*> hand;
+    bool winner;
 
 public:
     // Constructor(s)
@@ -27,10 +28,12 @@ public:
     string getName();
     unsigned short getNumOfCards();
     vector<Card*> getHand();
+    bool getWinner();
 
     // Setter(s)
     void pickUpCards(unsigned short num);
     vector<Card*>::iterator cardMatch(Card* playerCard);
     void discardCards(vector<Card*>::iterator index);
+    void setWinner();
 };
 

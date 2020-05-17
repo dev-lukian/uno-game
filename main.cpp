@@ -17,13 +17,13 @@ void displayDiscardPile();
 // Displays current player's hand
 void displayPlayerHand(Player& currentPlayer);
 // Checks to see if card in discard pile is an action card, and if so perform the action
-bool actionCheck(Card* card, unsigned short& turn, vector<Player>& players, unsigned short& numOfPlayers, bool& reverse);
+void actionCheck(Card* card, unsigned short& turn, vector<Player>& players, unsigned short& numOfPlayers, bool& reverse, bool firstCard);
 // Goes on to next player (direction depends on value of reverse)
 void nextPlayer(unsigned short& turn, bool& reverse, unsigned short& numOfPlayers);
 // Plays out if option 1 is chosen from moves by player
-Card* discardOption(Player& currentPlayer, string discard, unsigned short playerOption);
+Card* discardOption(Player& currentPlayer, string discard, unsigned short playerOption, bool& winningCondition);
 // Plays out if option 2 is chosen from moves by player
-Card* pickUpOption(Player& currentPlayer, unsigned short playerOption);
+Card* pickUpOption(Player& currentPlayer, unsigned short playerOption, bool& winningCondition);
 
 int main() {
     unsigned short numOfPlayers;
@@ -69,6 +69,7 @@ int main() {
         players[i - 1].pickUpCards(7);
     }
 
+
     bool winningCondition = false;
     // Game starts with Player #1 going first
     unsigned short turn = 0;
@@ -79,9 +80,14 @@ int main() {
     Deck::subtract(1);
 
     // Checks to see if first card in discard pile is an action card, and if so perform the action
-    bool actionFound = actionCheck(DiscardPile::getTopCard(), turn, players, numOfPlayers, reverse);
-    if (actionFound) {
-        nextPlayer(turn, reverse, numOfPlayers);
+    actionCheck(DiscardPile::getTopCard(), turn, players, numOfPlayers, reverse, true);
+    if (reverse) {
+        if (turn == 0) {
+            turn = (numOfPlayers - 1);
+        }
+        else {
+            turn--;
+        }
     }
 
     // Game loops until a winning condition is found
@@ -99,20 +105,39 @@ int main() {
         cout << "2. Pick up a card" << endl;
         cin >> playerOption;
         if (playerOption == 1) {
-            Card* discardedCard = discardOption(players[turn], discard, playerOption);
+            Card* discardedCard = discardOption(players[turn], discard, playerOption, winningCondition);
             if (discardedCard != nullptr) {
-                actionCheck(discardedCard, turn, players, numOfPlayers, reverse);
+                actionCheck(discardedCard, turn, players, numOfPlayers, reverse, false);
             }
         }
         else if (playerOption == 2) {
-            Card* pickedUpCard = pickUpOption(players[turn], playerOption);
+            Card* pickedUpCard = pickUpOption(players[turn], playerOption, winningCondition);
             if (pickedUpCard != nullptr) {
-                actionCheck(pickedUpCard, turn, players, numOfPlayers, reverse);
+                actionCheck(pickedUpCard, turn, players, numOfPlayers, reverse, false);
             }
         }
 
         nextPlayer(turn, reverse, numOfPlayers);
     }
+
+    Player winner = players[0];
+
+    for (int i = 0; i < numOfPlayers; i++) {
+        // Player wins by discarding all the cards in his hand
+        if (players[i].getWinner()) {
+            winner = players[i];
+            break;
+        }
+
+        // Player wins by having least number of cards in his hand when the deck is gone
+        if (players[i].getNumOfCards() < winner.getNumOfCards()) {
+            winner = players[i];
+        }
+    }
+
+    // Winner is announced
+    cout << endl << winner.getName() << " is the winner!" << endl << "Game Over" << endl;
+
 }
 
 void displayDiscardPile() {
@@ -137,37 +162,46 @@ void displayPlayerHand(Player& currentPlayer) {
     }
 }
 
-bool actionCheck(Card* card, unsigned short& turn, vector<Player>& players, unsigned short& numOfPlayers, bool& reverse) {
+void actionCheck(Card* card, unsigned short& turn, vector<Player>& players, unsigned short& numOfPlayers, bool& reverse, bool firstCard) {
+    // bool firstCard is true if the card being checked is the first card in the discard pile
     int lastTurn = numOfPlayers - 1;
-    bool actionFound = false;
 
     // "Block" action
     if (card->getDigit() == 'B') {
+        cout << endl << "The card discarded is a block card!" << endl;
         if (turn == lastTurn) {
             turn = 0;
+            cout << players[0].getName() << " skips his turn. " << endl;
         }
         else {
             turn++;
+            if (firstCard) {
+                cout << players[0].getName() << " skips his turn. " << endl;
+            }
+            else {
+                cout << players[turn].getName() << " skips his turn. " << endl;
+            }
         }
-        actionFound = true;
     }
     // "Reverse" action
     else if (card->getDigit() == 'R') {
+        cout << endl << "The card discarded is a reverse card!" << endl;
         // Switches to opposite direction as previously
         reverse = !reverse;
-        actionFound = true;
     }
     // "Add cards" action
-    else if (card->getPlus() != 'N') {
-        if (turn == lastTurn) {
-            int num = card->getPlus() - 48;
+    else if (card->getDraw() != 'N') {
+        cout << endl << "The card discarded is a draw card!" << endl;
+        if (firstCard || turn == lastTurn) {
+            int num = card->getDraw() - 48;
             players[0].pickUpCards(num);
+            cout << players[0].getName() << " picks up " << num << " cards." << endl;
         }
         else {
-            int num = card->getPlus() - 48;
+            int num = card->getDraw() - 48;
             players[turn + 1].pickUpCards(num);
+            cout << players[turn + 1].getName() << " picks up " << num << " cards." << endl;
         }
-        actionFound = true;
     }
 
     // "Wildcard" action
@@ -175,8 +209,9 @@ bool actionCheck(Card* card, unsigned short& turn, vector<Player>& players, unsi
         while(true) {
             try {
                 char newColor;
+                cout << endl << "The card discarded is a wildcard!" << endl;
                 cout
-                        << "What color would you like to change to? (Type 'R' for Red, 'G' for Green, 'B' for Blue, and 'Y' for Yellow)"
+                        << "What color " << players[turn].getName() << " would you like to change to? (Type 'R' for Red, 'G' for Green, 'B' for Blue, and 'Y' for Yellow)"
                         << endl;
                 cin >> newColor;
 
@@ -192,10 +227,7 @@ bool actionCheck(Card* card, unsigned short& turn, vector<Player>& players, unsi
                 cout << error << endl;
             }
         }
-        actionFound = true;
     }
-
-    return actionFound;
 }
 
 void nextPlayer(unsigned short& turn, bool& reverse, unsigned short& numOfPlayers) {
@@ -219,7 +251,7 @@ void nextPlayer(unsigned short& turn, bool& reverse, unsigned short& numOfPlayer
     }
 }
 
-Card* discardOption(Player& currentPlayer, string discard, unsigned short playerOption) {
+Card* discardOption(Player& currentPlayer, string discard, unsigned short playerOption, bool& winningCondition) {
     while (true) {
         try {
             cout << "Which card do you want to discard? (Type '0' to pick up a card)" << endl;
@@ -227,7 +259,7 @@ Card* discardOption(Player& currentPlayer, string discard, unsigned short player
 
             // Player chooses to pick up card as he cannot discard any
             if (discard == "0") {
-                pickUpOption(currentPlayer, playerOption);
+                pickUpOption(currentPlayer, playerOption, winningCondition);
                 return nullptr;
             }
 
@@ -235,6 +267,13 @@ Card* discardOption(Player& currentPlayer, string discard, unsigned short player
             Card cardToDiscard =  Card(discard);
             auto acceptableCard = currentPlayer.cardMatch(&cardToDiscard);
             currentPlayer.discardCards(acceptableCard);
+
+            // Winning condition check: Player has no more cards in his hand
+            if (currentPlayer.getNumOfCards() == 0) {
+                winningCondition = true;
+                currentPlayer.setWinner();
+                return nullptr;
+            }
 
             // Card object created on heap to be added to Discard Pile now
             Card* discardedCard = new Card(discard);
@@ -247,7 +286,13 @@ Card* discardOption(Player& currentPlayer, string discard, unsigned short player
     }
 }
 
-Card* pickUpOption(Player& currentPlayer, unsigned short playerOption) {
+Card* pickUpOption(Player& currentPlayer, unsigned short playerOption, bool& winningCondition) {
+    // Winning condition check: Deck runs out of cards
+    if (Deck::getNumOfCards() == 0) {
+        winningCondition = true;
+        return nullptr;
+    }
+
     currentPlayer.pickUpCards(1);
     Card* cardPickedUp = currentPlayer.getHand()[currentPlayer.getNumOfCards() - 1];
     cout << "You picked up a " << cardPickedUp->getDisplayValue() << endl;
@@ -271,6 +316,12 @@ Card* pickUpOption(Player& currentPlayer, unsigned short playerOption) {
             cin >> playerOption;
             if (playerOption == 1) {
                 currentPlayer.discardCards(acceptableCard);
+                // Winning condition check: Player has no more cards in his hand
+                if (currentPlayer.getNumOfCards() == 0) {
+                    winningCondition = true;
+                    currentPlayer.setWinner();
+                    return nullptr;
+                }
                 DiscardPile::addCard(cardPickedUp);
                 return cardPickedUp;
             } else if (playerOption == 2) {

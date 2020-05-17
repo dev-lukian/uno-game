@@ -11,7 +11,7 @@ using namespace std;
 class Card {
 private:
     string displayValue; // The value you will see in the TUI
-    char plus;
+    char draw;
     char digit;
     char color;
     bool wildcard;
@@ -22,7 +22,7 @@ public:
 
     // Getter(s)
     string getDisplayValue();
-    char getPlus();
+    char getDraw();
     char getDigit();
     char getColor();
     bool getWildCard();

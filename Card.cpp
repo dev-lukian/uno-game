@@ -9,12 +9,12 @@ Card::Card(string displayValue) {
 
     // Checks to see if card is a plus card ('Y' means yes, 'N' means no)
     if (displayValue.length() == 3) {
-        plus = displayValue[1];
+        draw = displayValue[1];
         digit = 'N';
         color = displayValue[2];
     }
     else {
-        plus = 'N';
+        draw = 'N';
         digit = displayValue[0];
         color = displayValue[1];
     }
@@ -25,7 +25,7 @@ Card::Card(string displayValue) {
         color = 'N';
         digit = 'N';
         if (displayValue.length() == 1) {
-            plus = 'N';
+            draw = 'N';
         }
     }
     else {
@@ -38,8 +38,8 @@ string Card::getDisplayValue() {
     return displayValue;
 }
 
-char Card::getPlus() {
-    return plus;
+char Card::getDraw() {
+    return draw;
 }
 
 char Card::getDigit() {
