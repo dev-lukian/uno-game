@@ -57,13 +57,20 @@ int main() {
         try {
             cout << "Number of players (2-10): ";
             cin >> numOfPlayers;
-            if (numOfPlayers < 2 || numOfPlayers > 10) {
-                throw "Only 2-10 players can play UNO. Please type in a valid number.";
+            if (cin.fail()) {
+                cin.clear();
+                cin.ignore(80, '\n');
+                throw invalid_argument("Please type in a valid number. Please try again");
             }
-            break;
+            else if (numOfPlayers < 2 || numOfPlayers > 10 ) {
+                throw invalid_argument("Only 2-10 players can play UNO. Please try again.");
+            }
+            else {
+                break;
+            }
         }
-        catch (const char* error) {
-            cout << error << endl;
+        catch (invalid_argument& error) {
+            cout << error.what() << endl;
         }
     }
     cout << endl;
@@ -122,13 +129,20 @@ int main() {
                 cout << "1. Discard a card" << endl;
                 cout << "2. Pick up a card" << endl;
                 cin >> playerOption;
-                if (playerOption != 1 && playerOption != 2) {
-                    throw "Invalid menu option. Please try again.";
+                if (cin.fail()) {
+                    cin.clear();
+                    cin.ignore(80, '\n');
+                    throw invalid_argument("Invalid menu option. Please try again.");
                 }
-                break;
+                else if (playerOption != 1 && playerOption != 2) {
+                    throw invalid_argument("Invalid menu option. Please try again.");
+                }
+                else {
+                    break;
+                }
             }
-            catch (const char* error) {
-                cout << error << endl;
+            catch (invalid_argument& error) {
+                cout << error.what() << endl;
             }
         }
         if (playerOption == 1) {
@@ -287,8 +301,8 @@ Card* discardOption(Player& currentPlayer, string discard, unsigned short player
 
             // Player chooses to pick up card as he cannot discard any
             if (discard == "0") {
-                pickUpOption(currentPlayer, playerOption, winningCondition);
-                return nullptr;
+                Card* pickedUpCard = pickUpOption(currentPlayer, playerOption, winningCondition);
+                return pickedUpCard;
             }
 
             // Local card object to check whether card can actually be discarded
