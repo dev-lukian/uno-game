@@ -3,6 +3,7 @@
 //
 
 #include <random>
+#include <algorithm>
 #include "Deck.h"
 
 // Initial UNO deck consists of 108 cards
