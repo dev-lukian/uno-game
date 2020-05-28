@@ -12,7 +12,7 @@ A tui of the popular game, UNO. In this game, players take turns matching a card
 # how-to-run
 1) Download the clone/download files
 2) Open your terminal and go to the directory of the uno-game
-3) Type `make` in the commandline to compile the source files
+3) Type `make` in the command line to compile the source files
 4) Type `./uno.out` to start the game
 5) Have fun!
 
