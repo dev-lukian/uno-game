@@ -42,12 +42,12 @@ vector<Card*>::iterator Player::cardMatch(Card* playerCard) {
                 return iter;
             }
             else {
-                throw "Card does not match with card on top of discard pile! Try again.";
+                throw invalid_argument("Card does not match with card on top of discard pile! Try again.");
             }
         }
     }
 
-    throw "You do not have such a card in your hand! Try again.";
+    throw invalid_argument("You do not have such a card in your hand! Try again.");
 }
 
 void Player::discardCards(vector<Card*>::iterator index) {
