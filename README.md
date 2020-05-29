@@ -10,7 +10,7 @@ A tui of the popular game, UNO. In this game, players take turns matching a card
 6. Players can only discard one card at a time
 
 # how-to-run
-1) Download the clone/download files
+1) Clone/download files to your computer
 2) Open your terminal and go to the directory of the uno-game
 3) Type `make` in the command line to compile the source files
 4) Type `./uno.out` to start the game
