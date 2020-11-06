@@ -5,8 +5,8 @@ A tui of the popular game, UNO. In this game, players take turns matching a card
 1. Only 2-10 players can play
 2. Order is determined of the order that the player's name is inputted
 3. Each player is dealt 7 cards at the start of the game
-4. During a player's turn, the play can only pick up a card or discard a card if it matches the top card in the discard pile
-5. Discarded card much match the top of the deck either by color or number
+4. During a player's turn, the player can only pick up a card or discard a card if it matches the top card in the discard pile
+5. Discarded card must match the top of the deck either by color or number
 6. Players can only discard one card at a time
 
 # how-to-run
